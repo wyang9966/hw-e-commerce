@@ -6,7 +6,7 @@ import "@mantine/core/styles.css";
 
 function App() {
   return (
-    // testing CICD
+    // testing 
     <MantineProvider>
       <RouterProvider router={router} />
     </MantineProvider>
