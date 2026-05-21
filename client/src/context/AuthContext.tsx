@@ -35,8 +35,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem(AUTH_STORAGE_KEY);
   };
 
+  const updateUser = (updatedUser: AuthUser) => {
+    setUser(updatedUser);
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(updatedUser));
+  };
+
   const value = useMemo(
-    () => ({ user, login, logout }),
+    () => ({ user, login, logout, updateUser }),
     [user],
   );
 
