@@ -7,14 +7,26 @@ import {
   IconShoppingCart,
 } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { SearchBar } from "./SearchBar";
 import { ThemeToggler } from "./ThemeToggler";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../hooks/useCart";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, logout } = useAuth();
+  const { data: cart } = useCart();
+
+  const cartItemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+
+  const handleLogout = () => {
+    logout();
+    queryClient.setQueryData(["cart"], { items: [] });
+    navigate("/login");
+  };
 
   return (
     <Group
@@ -35,7 +47,7 @@ export const Navbar = () => {
 
       <Group>
         <ThemeToggler />
-        <Indicator label={1} size={16} color="red" position="middle-start">
+        <Indicator label={cartItemCount} size={16} color="red" position="middle-start">
           <Button
             variant="subtle"
             leftSection={<IconShoppingCart size={18} />}
@@ -71,10 +83,7 @@ export const Navbar = () => {
               <Menu.Item
                 leftSection={<IconLogout size={16} />}
                 color="red"
-                onClick={() => {
-                  logout();
-                  navigate("/login");
-                }}
+                onClick={handleLogout}
               >
                 Logout
               </Menu.Item>
