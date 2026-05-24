@@ -1,11 +1,13 @@
-import { Container, Text, Title, SimpleGrid, Card, Image, Badge, Group, Rating, Stack, Loader, Center } from '@mantine/core';
+import { Container, Text, Title, SimpleGrid, Card, Image, Badge, Group, Rating, Stack, Center } from '@mantine/core';
 import { useProducts } from '../../../hooks/useProducts';
 import { Spinner } from '../../../components/ui/Spinner';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Products = () => {
   const navigate = useNavigate();
-  const { data, isLoading, error } = useProducts({});
+  const [searchParams] = useSearchParams();
+  const category = searchParams.get('category') ?? undefined;
+  const { data, isLoading, error } = useProducts({ category });
 
   if (isLoading) {
     return (
@@ -28,12 +30,20 @@ const Products = () => {
   return (
     <Container size="xl" py="xl">
       <Title order={1} mb="xl">
-        Our Products
+        {category ? `Products in ${category}` : 'Our Products'}
       </Title>
       {data?.products && data.products.length > 0 ? (
         <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 4 }} spacing="lg">
           {data.products.map((product) => (
-            <Card key={product.id} shadow="sm" padding="lg" radius="md" withBorder onClick={() => navigate(`/products/${product.id}`)} style={{ cursor: 'pointer' }}>
+            <Card
+              key={product.id}
+              shadow="sm"
+              padding="lg"
+              radius="md"
+              withBorder
+              onClick={() => navigate(`/products/${product.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <Card.Section>
                 <Image src={product.thumbnail} height={200} alt={product.title} />
               </Card.Section>
