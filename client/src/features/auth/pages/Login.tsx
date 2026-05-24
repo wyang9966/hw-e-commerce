@@ -16,17 +16,46 @@ const Login = () => {
   const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
+    setUsernameError("");
+    setPasswordError("");
+    setAuthError("");
+
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
+    let hasError = false;
+
+    if (!trimmedUsername) {
+      setUsernameError("Username is required.");
+      hasError = true;
+    }
+
+    if (!trimmedPassword) {
+      setPasswordError("Password is required.");
+      hasError = true;
+    } else if (trimmedPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters.");
+      hasError = true;
+    }
+
+    if (hasError) {
+      return;
+    }
 
     try {
-      await login({ username, password });
+      setIsSubmitting(true);
+      await login({ username: trimmedUsername, password: trimmedPassword });
       navigate("/");
     } catch (loginError) {
-      setError("Invalid username or password.");
+      setAuthError("Invalid username or password.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -42,7 +71,7 @@ const Login = () => {
             placeholder="Enter your username"
             value={username}
             onChange={(event) => setUsername(event.currentTarget.value)}
-            required
+            error={usernameError}
             mb="sm"
           />
           <PasswordInput
@@ -50,20 +79,28 @@ const Login = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(event) => setPassword(event.currentTarget.value)}
-            required
+            error={passwordError}
             mb="md"
           />
-          {error ? (
+          {authError ? (
             <Text color="red" size="sm" mb="sm">
-              {error}
+              {authError}
             </Text>
           ) : null}
-          <Button type="submit" fullWidth>
+          <Button type="submit" fullWidth loading={isSubmitting} disabled={isSubmitting}>
             Login
           </Button>
-          <span style={{ fontSize: "0.875rem", color: "#6c757d", textAlign: "center", display: "block", marginTop: "1rem" }}>
-            Try: <span style={{ fontWeight: 700, color: "inherit" }}>emilys / emilyspass</span>
-            </span>
+          <Button
+            variant="outline"
+            fullWidth
+            mt="sm"
+            onClick={() => navigate("/signup")}
+          >
+            Go to Signup
+          </Button>
+          <Text size="sm" c="dimmed" ta="center" mt="md">
+            Demo credentials: <Text component="span" fw={700} c="dark">emilys</Text> / <Text component="span" fw={700} c="dark">emilyspass</Text>
+          </Text>
         </form>
       </Card>
     </Container>
