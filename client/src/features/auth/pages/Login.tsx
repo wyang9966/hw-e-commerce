@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -13,7 +13,9 @@ import { useAuth } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
+  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? "/";
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -51,7 +53,7 @@ const Login = () => {
     try {
       setIsSubmitting(true);
       await login({ username: trimmedUsername, password: trimmedPassword });
-      navigate("/");
+      navigate(from, { replace: true });
     } catch (loginError) {
       setAuthError("Invalid username or password.");
     } finally {
