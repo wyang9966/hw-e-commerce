@@ -21,6 +21,12 @@ export const Navbar = () => {
   const { data: cart } = useCart();
 
   const cartItemCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const userDisplayName =
+    user?.firstName || user?.lastName
+      ? `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim()
+      : user?.username;
+  // const userSubTitle = user?.email ?? user?.username;
+  const userSubTitle = "Premium Member"; 
 
   const handleLogout = () => {
     logout();
@@ -58,21 +64,26 @@ export const Navbar = () => {
         </Indicator>
 
         {user ? (
-          <Menu shadow="md" width={200}>
+          <Menu shadow="md" width={240}>
             <Menu.Target>
               <Button
                 variant="subtle"
                 rightSection={<IconChevronDown size={16} />}
               >
                 <Group gap="xs">
-                  <Avatar src="" alt={user.username} size="sm" />
-                  <Text size="sm">{user.username}</Text>
+                  <Avatar src="" alt={userDisplayName} size="sm" />
+                  <div>
+                    <Text size="sm">{userDisplayName}</Text>
+                    <Text size="xs" c="dimmed">
+                      {userSubTitle}
+                    </Text>
+                  </div>
                 </Group>
               </Button>
             </Menu.Target>
 
             <Menu.Dropdown>
-              <Menu.Label>Account</Menu.Label>
+              <Menu.Label>Signed in as {userDisplayName}</Menu.Label>
               <Menu.Item
                 leftSection={<IconSettings size={16} />}
                 onClick={() => navigate("/settings")}

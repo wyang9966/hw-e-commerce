@@ -26,13 +26,13 @@ import type { CartItemWithProduct } from "../../../types/cart";
 const Cart = () => {
   const navigate = useNavigate();
   const { data: cart, isLoading: isCartLoading } = useCart();
-  const { data: productsData } = useProducts({ limit: 1000 });
+  const { data: productsData, isLoading: isProductsLoading } = useProducts({ limit: 1000 });
   const removeItem = useRemoveCartItem();
   const updateQuantity = useUpdateCartItemQuantity();
   const clearCart = useClearCart();
   const [isProcessing, setIsProcessing] = useState(false);
 
-  if (isCartLoading) {
+  if (isCartLoading || ((cart?.items.length ?? 0) > 0 && isProductsLoading)) {
     return (
       <Container size="lg" py="xl">
         <Text>Loading cart...</Text>
@@ -94,7 +94,7 @@ const Cart = () => {
     }
   };
 
-  if (!cartItems || cartItems.length === 0) {
+  if ((cart?.items.length ?? 0) === 0) {
     return (
       <Container size="lg" py="xl">
         <Title order={1} mb="xl">
