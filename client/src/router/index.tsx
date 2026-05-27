@@ -1,16 +1,19 @@
-import { createBrowserRouter, createHashRouter } from "react-router-dom";
+import { lazy } from "react";
+import { createHashRouter } from "react-router-dom";
 
 import GlobalErrorPage from "../components/errors/GlobalErrorPage";
+import RouteErrorBoundary from "../components/errors/RouteErrorBoundary";
 import RootLayout from "../components/layout/RootLayout";
 
-import Home from "../features/products/pages/Home";
-import Products from "../features/products/pages/Products";
-import ProductDetail from "../features/products/pages/ProductDetail";
-import Cart from "../features/cart/pages/Cart";
-import Login from "../features/auth/pages/Login";
-import Signup from "../features/auth/pages/Signup";
-import Settings from "../features/settings/pages/Settings";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
+
+const Home = lazy(() => import("../features/products/pages/Home"));
+const Products = lazy(() => import("../features/products/pages/Products"));
+const ProductDetail = lazy(() => import("../features/products/pages/ProductDetail"));
+const Cart = lazy(() => import("../features/cart/pages/Cart"));
+const Login = lazy(() => import("../features/auth/pages/Login"));
+const Signup = lazy(() => import("../features/auth/pages/Signup"));
+const Settings = lazy(() => import("../features/settings/pages/Settings"));
 
 export const router = createHashRouter([
   {
@@ -18,28 +21,64 @@ export const router = createHashRouter([
     element: <RootLayout />,
     errorElement: <GlobalErrorPage />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "products", element: <Products /> },
+      {
+        index: true,
+        element: (
+          <RouteErrorBoundary name="Home">
+            <Home />
+          </RouteErrorBoundary>
+        ),
+      },
+      {
+        path: "products",
+        element: (
+          <RouteErrorBoundary name="Products">
+            <Products />
+          </RouteErrorBoundary>
+        ),
+      },
       {
         path: "products/:id",
-        element: <ProductDetail />,
+        element: (
+          <RouteErrorBoundary name="Product Detail">
+            <ProductDetail />
+          </RouteErrorBoundary>
+        ),
       },
-      { path: "login", element: <Login /> },
-      { path: "signup", element: <Signup /> },
+      {
+        path: "login",
+        element: (
+          <RouteErrorBoundary name="Login">
+            <Login />
+          </RouteErrorBoundary>
+        ),
+      },
+      {
+        path: "signup",
+        element: (
+          <RouteErrorBoundary name="Signup">
+            <Signup />
+          </RouteErrorBoundary>
+        ),
+      },
       {
         path: "cart",
         element: (
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
+          <RouteErrorBoundary name="Cart">
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          </RouteErrorBoundary>
         ),
       },
       {
         path: "settings",
         element: (
-          <ProtectedRoute>
-            <Settings />
-          </ProtectedRoute>
+          <RouteErrorBoundary name="Settings">
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          </RouteErrorBoundary>
         ),
       },
     ],

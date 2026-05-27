@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import { MantineProvider } from "@mantine/core";
 import { RouterProvider } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { router } from "./router";
 import { queryClient } from "./lib/queryClient";
 import { AuthProvider } from "./context/AuthContext";
+import { Spinner } from "./components/ui/Spinner";
 
 import "@mantine/core/styles.css";
 
@@ -12,7 +14,9 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <MantineProvider>
-          <RouterProvider router={router} />
+          <Suspense fallback={<Spinner />}>
+            <RouterProvider router={router} />
+          </Suspense>
         </MantineProvider>
       </QueryClientProvider>
     </AuthProvider>
