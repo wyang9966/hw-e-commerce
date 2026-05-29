@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { NotFoundError, errorMiddleware } from "./core/errors";
+import productRoutes from "./modules/products/product.routes";
 
 const app = express();
 const PORT = 3001;
@@ -18,6 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (_req, res) => {
   res.json({ message: "Lecture E-Commerce API is running", port: PORT });
 });
+
+// Products API
+app.use("/products", productRoutes);
 
 // 404
 app.use((_req, _res, next) => next(new NotFoundError()));
