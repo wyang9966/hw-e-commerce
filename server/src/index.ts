@@ -4,6 +4,7 @@ import cors from "cors";
 import { NotFoundError, errorMiddleware } from "./core/errors";
 import productRoutes from "./modules/products/product.routes";
 import cartRoutes from "./modules/carts/cart.routes";
+import userRoutes from "./modules/users/user.routes";
 
 const app = express();
 const PORT = 3001;
@@ -26,6 +27,9 @@ app.use("/products", productRoutes);
 
 // Carts API
 app.use("/carts", cartRoutes);
+
+// Users API
+app.use("/users", userRoutes);
 
 // 404
 app.use((_req, _res, next) => next(new NotFoundError()));
